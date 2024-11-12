@@ -29,7 +29,7 @@ class _HighlightsState extends State<Highlights> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+          physics: const ClampingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -78,17 +78,14 @@ class _HighlightsState extends State<Highlights> {
                   )
                 ],
               ),
-              ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: height * 0.5),
-                child: Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: themeColor.onSecondary,
-                    ),
-                    width: width,
-                    child: const CallLogs()),
-              ),
+              Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: themeColor.onSecondary,
+                  ),
+                  width: width,
+                  child: const CallLogs()),
             ],
           ),
         ),

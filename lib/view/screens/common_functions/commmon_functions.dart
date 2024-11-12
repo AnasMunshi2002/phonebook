@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../models/contact/person.dart';
+import '../../../services/database/bin/bin_db.dart';
 import '../../../services/database/contacts/add/add_contact.dart';
 import '../../../view_model/all_data_provider/all_data_provider.dart';
 import '../../../view_model/filter_provider/filter_provider.dart';
@@ -22,14 +23,20 @@ Future<void> requestPermissions(BuildContext context) async {
   var callLogStatus = await Permission.phone.request();
   if (context.mounted) {
     if (storageStatus.isGranted) {
-      showSnack('Storage permission granted', context);
+      /*showSnack('Storage permission granted', context);*/
     } else if (storageStatus.isDenied) {
+/*
       showSnack('Storage permission denied', context);
+*/
     }
     if (callLogStatus.isGranted) {
+/*
       showSnack('Call permission granted', context);
+*/
     } else if (callLogStatus.isDenied) {
+/*
       showSnack("Call permission denied", context);
+*/
     }
   }
 }
@@ -149,6 +156,8 @@ Future<ImageSource?> showOptions(BuildContext context) async {
 Future<int> deleteContact(Person person) async {
   final DBManager dbManager = DBManager();
   int result = await dbManager.deleteContact(person);
+  final BinDB binDB = BinDB();
+  await binDB.addContact(person);
   return result;
 }
 

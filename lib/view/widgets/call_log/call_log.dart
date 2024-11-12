@@ -31,51 +31,48 @@ class CallLogsState extends State<CallLogs> {
   @override
   Widget build(BuildContext context) {
     return Consumer<CallLogProvider>(builder: (context, consumer, child) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: consumer.recentCalls.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                physics: const ClampingScrollPhysics(),
-                itemCount: consumer.recentCalls.length,
-                itemBuilder: (context, index) {
-                  final call = consumer.recentCalls[index];
+      return consumer.recentCalls.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: consumer.recentCalls.length,
+              itemBuilder: (context, index) {
+                final call = consumer.recentCalls[index];
 
-                  String formattedDate =
-                      DateFormat('HH:mm:ss dd-MM-yyy').format(
-                    DateTime.fromMillisecondsSinceEpoch(call.timestamp!),
-                  );
-                  String time = formattedDate.split(" ")[0];
-                  String date = formattedDate.split(" ")[1];
-                  return ListTile(
-                    onTap: () {
-                      callNumber(call.number!, context);
-                    },
-                    title: Text(
-                      call.name?.isNotEmpty == true ? call.name! : 'Unknown',
-                    ),
-                    subtitle: Text(call.number ?? 'Unknown'),
-                    leading: Icon(
-                      call.callType == CallType.incoming
-                          ? AppIcons.received
-                          : (call.callType == CallType.outgoing
-                              ? AppIcons.called
-                              : AppIcons.missed),
-                      color: call.callType == CallType.missed
-                          ? CommonColors.redC
-                          : CommonColors.greenC,
-                    ),
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(time),
-                        Text(date),
-                      ],
-                    ),
-                  );
-                },
-              ),
-      );
+                String formattedDate = DateFormat('HH:mm:ss dd-MM-yyy').format(
+                  DateTime.fromMillisecondsSinceEpoch(call.timestamp!),
+                );
+                String time = formattedDate.split(" ")[0];
+                String date = formattedDate.split(" ")[1];
+                return ListTile(
+                  onTap: () {
+                    callNumber(call.number!, context);
+                  },
+                  title: Text(
+                    call.name?.isNotEmpty == true ? call.name! : 'Unknown',
+                  ),
+                  subtitle: Text(call.number ?? 'Unknown'),
+                  leading: Icon(
+                    call.callType == CallType.incoming
+                        ? AppIcons.received
+                        : (call.callType == CallType.outgoing
+                            ? AppIcons.called
+                            : AppIcons.missed),
+                    color: call.callType == CallType.missed
+                        ? CommonColors.redC
+                        : CommonColors.greenC,
+                  ),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(time),
+                      Text(date),
+                    ],
+                  ),
+                );
+              },
+            );
     });
   }
 }

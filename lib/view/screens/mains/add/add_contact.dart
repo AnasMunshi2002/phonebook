@@ -156,6 +156,7 @@ class _AddContactState extends State<AddContact> {
               child: const Text("Save"),
             ),
             PopupMenuButton(
+              menuPadding: const EdgeInsets.all(0),
               itemBuilder: (context) =>
                   [const PopupMenuItem(child: Text("Help & feedback"))],
             )

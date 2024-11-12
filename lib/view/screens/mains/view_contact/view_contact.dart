@@ -12,7 +12,6 @@ import '../../../widgets/buttons/circle_button.dart';
 import '../../../widgets/icons/appicons.dart';
 import '../../../widgets/navigator/navigator.dart';
 import '../../common_functions/commmon_functions.dart';
-import '../../view_image/view_image.dart';
 import '../add/add_contact.dart';
 
 class ViewContact extends StatefulWidget {
@@ -59,59 +58,71 @@ class _ViewContactState extends State<ViewContact> {
                 },
                 icon: person.fav! ? AppIcons.star : AppIcons.starOutlined),
             PopupMenuButton(
+                menuPadding: const EdgeInsets.all(0),
                 itemBuilder: (context) => [
                       PopupMenuItem(
+                          padding: const EdgeInsets.all(0),
                           child: ListTile(
-                        onTap: () {
-                          shareContact(person);
-                        },
-                        title: const Text("Share"),
-                        leading: AppIcons.share,
-                      )),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 7),
+                            onTap: () {
+                              shareContact(person);
+                            },
+                            title: const Text("Share"),
+                            leading: AppIcons.share,
+                          )),
                       PopupMenuItem(
+                          padding: const EdgeInsets.all(0),
                           child: ListTile(
-                        onTap: () {
-                          Person send = Person(
-                              addDate: person.addDate,
-                              firstname: person.firstname,
-                              phone: person.phone,
-                              prefix: person.prefix,
-                              fav: person.fav,
-                              birthday: person.birthday,
-                              lastname: person.lastname,
-                              image: person.image,
-                              email: person.email,
-                              address: person.address,
-                              id: person.id);
-                          !person.blocked!
-                              ? Provider.of<AllDataProvider>(context,
-                                      listen: false)
-                                  .toggleBlock(context, send, true)
-                              : Provider.of<AllDataProvider>(context,
-                                      listen: false)
-                                  .toggleBlock(context, send, false);
-                          NavigateRoute.pop(context);
-                        },
-                        title: Text((person.blocked!) ? "Unblock" : "Block"),
-                        leading: AppIcons.block,
-                      )),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 7),
+                            onTap: () {
+                              Person send = Person(
+                                  addDate: person.addDate,
+                                  firstname: person.firstname,
+                                  phone: person.phone,
+                                  prefix: person.prefix,
+                                  fav: person.fav,
+                                  birthday: person.birthday,
+                                  lastname: person.lastname,
+                                  image: person.image,
+                                  email: person.email,
+                                  address: person.address,
+                                  id: person.id);
+                              !person.blocked!
+                                  ? Provider.of<AllDataProvider>(context,
+                                          listen: false)
+                                      .toggleBlock(context, send, true)
+                                  : Provider.of<AllDataProvider>(context,
+                                          listen: false)
+                                      .toggleBlock(context, send, false);
+                              NavigateRoute.pop(context);
+                            },
+                            title:
+                                Text((person.blocked!) ? "Unblock" : "Block"),
+                            leading: AppIcons.block,
+                          )),
                       PopupMenuItem(
+                          padding: const EdgeInsets.all(0),
                           child: ListTile(
-                        onTap: () async {
-                          int result = await deleteContact(person);
-                          if (result == 1 && context.mounted) {
-                            NavigateRoute.pop(context);
-                            NavigateRoute.pop(context);
-                            Provider.of<AllDataProvider>(context, listen: false)
-                                .refresh();
-                          }
-                        },
-                        title: Text(
-                          "Delete",
-                          style: TextStyle(color: CommonColors.redC),
-                        ),
-                        leading: AppIcons.delete,
-                      )),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 7),
+                            onTap: () async {
+                              int result = await deleteContact(person);
+                              if (result == 1 && context.mounted) {
+                                NavigateRoute.pop(context);
+                                NavigateRoute.pop(context);
+                                Provider.of<AllDataProvider>(context,
+                                        listen: false)
+                                    .refresh();
+                              }
+                            },
+                            title: Text(
+                              "Move to Bin",
+                              style: TextStyle(color: CommonColors.redC),
+                            ),
+                            leading: AppIcons.delete,
+                          )),
                     ])
           ],
         ),
@@ -124,12 +135,17 @@ class _ViewContactState extends State<ViewContact> {
                 person.image != null
                     ? GestureDetector(
                         onTap: () {
-                          NavigateRoute.push(
+                          /*NavigateRoute.push(
                               context,
                               ViewImage(
                                 image: person.image!,
                                 tag: tag,
-                              ));
+                              ));*/
+                          showDialog(
+                              context: context,
+                              builder: (context) => Dialog(
+                                    child: Image.file(File(person.image!)),
+                                  ));
                         },
                         child: Hero(
                           tag: tag,
@@ -164,7 +180,7 @@ class _ViewContactState extends State<ViewContact> {
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     CButton(
                         text: "Call",
@@ -178,8 +194,6 @@ class _ViewContactState extends State<ViewContact> {
                         },
                         icon: AppIcons.sms,
                         text: "Text"),
-                    CButton(
-                        text: "Video Call", event: () {}, icon: AppIcons.vCall),
                     CButton(
                         text: "Email",
                         event: () {
@@ -220,7 +234,6 @@ class _ViewContactState extends State<ViewContact> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            IconButton(onPressed: () {}, icon: AppIcons.vCall),
                             IconButton(
                                 onPressed: () {
                                   message(person.phone);

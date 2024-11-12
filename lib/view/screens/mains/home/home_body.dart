@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../models/contact/person.dart';
 import '../../../../view_model/all_data_provider/all_data_provider.dart';
+import '../../../../view_model/filter_provider/filter_provider.dart';
 import '../../../../view_model/theme/theme.dart';
 import '../../../widgets/contact_list_tile/contact_list_tile.dart';
 import '../../../widgets/icons/appicons.dart';
@@ -124,6 +125,7 @@ class _HomeBodyState extends State<HomeBody> {
                         Row(
                           children: [
                             PopupMenuButton(
+                              menuPadding: const EdgeInsets.all(0),
                               icon: AppIcons.aToZ,
                               itemBuilder: (BuildContext context) {
                                 return [
@@ -160,11 +162,86 @@ class _HomeBodyState extends State<HomeBody> {
                                 ];
                               },
                             ),
-                            IconButton(
-                                onPressed: () {
-                                  filterDialog(context, themeColor);
-                                },
-                                icon: AppIcons.filter),
+                            PopupMenuButton(
+                              menuPadding: const EdgeInsets.all(0),
+                              itemBuilder: (BuildContext context) {
+                                return [
+                                  PopupMenuItem(
+                                    padding: const EdgeInsets.all(0),
+                                    child: Consumer<FilterProvider>(
+                                        builder: (context, consumer, child) {
+                                      return CheckboxListTile(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 7),
+                                        value: consumer.isFav,
+                                        onChanged: (value) {
+                                          consumer.changeFav(value!);
+                                          context
+                                              .read<AllDataProvider>()
+                                              .filter(context);
+                                        },
+                                        title: const Text(
+                                          "Favourites",
+                                          overflow: TextOverflow.visible,
+                                          softWrap: false,
+                                        ),
+                                      );
+                                    }),
+                                  ),
+                                  PopupMenuItem(
+                                    padding: const EdgeInsets.all(0),
+                                    child: Consumer<FilterProvider>(
+                                        builder: (context, consumer, child) {
+                                      return CheckboxListTile(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 7),
+                                        value: consumer.isBlocked,
+                                        onChanged: (value) {
+                                          consumer.changeBlock(value!);
+                                          context
+                                              .read<AllDataProvider>()
+                                              .filter(context);
+                                        },
+                                        title: const Text(
+                                          "Blocked",
+                                          overflow: TextOverflow.visible,
+                                          softWrap: false,
+                                        ),
+                                      );
+                                    }),
+                                  ),
+                                  PopupMenuItem(
+                                    padding: const EdgeInsets.all(0),
+                                    child: Consumer<FilterProvider>(
+                                        builder: (context, consumer, child) {
+                                      return CheckboxListTile(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 7),
+                                        value: consumer.noName,
+                                        onChanged: (value) {
+                                          consumer.changeNoName(value!);
+                                          context
+                                              .read<AllDataProvider>()
+                                              .filter(context);
+                                        },
+                                        title: const Text(
+                                          "Nameless",
+                                          overflow: TextOverflow.visible,
+                                          softWrap: false,
+                                        ),
+                                      );
+                                    }),
+                                  )
+                                ];
+                              },
+                              child: AppIcons.filter,
+                            ),
+                            const SizedBox(
+                              width: 16,
+                            ),
                           ],
                         )
                       ],

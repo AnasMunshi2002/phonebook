@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../models/contact/person.dart';
 import '../../../view_model/all_data_provider/all_data_provider.dart';
+import '../../../view_model/bin_provider/bin_provider.dart';
 import '../../../view_model/theme/common.dart';
 import '../../screens/common_functions/commmon_functions.dart';
 import '../../screens/mains/add/add_contact.dart';
@@ -15,9 +16,11 @@ import '../navigator/navigator.dart';
 
 class CTile extends StatelessWidget {
   final Person person;
-  final AllDataProvider consumer;
+  final AllDataProvider? consumer;
+  final BinProvider? binProvider;
 
-  const CTile({required this.person, super.key, required this.consumer});
+  const CTile(
+      {required this.person, super.key, this.consumer, this.binProvider});
 
   Future dialog(BuildContext context, Person person) {
     return showDialog(
@@ -33,26 +36,12 @@ class CTile extends StatelessWidget {
                       NavigateRoute.push(
                           context,
                           AddContact(
-                            contacts: consumer.contacts,
+                            contacts: consumer!.contacts,
                             person: person,
                           ));
                     },
                     trailing: AppIcons.edit,
                     title: const Text("Update Contact"),
-                  ),
-                  ListTile(
-                    onTap: () async {
-                      int result = await deleteContact(person);
-                      if (result == 1 && context.mounted) {
-                        NavigateRoute.pop(context);
-                        Provider.of<AllDataProvider>(context, listen: false)
-                            .refresh();
-                      }
-                    },
-                    iconColor: CommonColors.redC,
-                    textColor: CommonColors.redC,
-                    trailing: AppIcons.delete,
-                    title: const Text("Delete Contact"),
                   ),
                   ListTile(
                     onTap: () {
@@ -79,6 +68,20 @@ class CTile extends StatelessWidget {
                     title: Text(
                         "${(person.blocked!) ? "Unblock" : "Block"} Contact"),
                   ),
+                  ListTile(
+                    onTap: () async {
+                      int result = await deleteContact(person);
+                      if (result == 1 && context.mounted) {
+                        NavigateRoute.pop(context);
+                        Provider.of<AllDataProvider>(context, listen: false)
+                            .refresh();
+                      }
+                    },
+                    iconColor: CommonColors.redC,
+                    textColor: CommonColors.redC,
+                    trailing: AppIcons.delete,
+                    title: const Text("Move To Bin"),
+                  ),
                 ],
               ),
             ));
@@ -91,14 +94,18 @@ class CTile extends StatelessWidget {
 
     return ListTile(
       onLongPress: () {
-        dialog(context, person);
+        if (consumer != null) {
+          dialog(context, person);
+        }
       },
       onTap: () {
-        NavigateRoute.push(
-            context,
-            ViewContact(
-              person: person,
-            ));
+        if (consumer != null) {
+          NavigateRoute.push(
+              context,
+              ViewContact(
+                person: person,
+              ));
+        }
       },
       title: Text(
         fullName,
@@ -132,11 +139,31 @@ class CTile extends StatelessWidget {
                     child: AppIcons.person,
                   ),
                 ),
-      trailing: person.blocked ?? false
-          ? null
-          : person.fav!
-              ? AppIcons.star
-              : null,
+      trailing: consumer != null
+          ? person.blocked ?? false
+              ? null
+              : person.fav!
+                  ? AppIcons.star
+                  : null
+          : PopupMenuButton(
+              menuPadding: const EdgeInsets.all(0),
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    child: const Text("Restore"),
+                    onTap: () {
+                      binProvider!.restoreOne(person, context);
+                    },
+                  ),
+                  PopupMenuItem(
+                    child: const Text("Delete Permanently"),
+                    onTap: () {
+                      binProvider!.removeOne(person);
+                    },
+                  )
+                ];
+              },
+            ),
     );
   }
 }

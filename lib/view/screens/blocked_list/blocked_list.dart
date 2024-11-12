@@ -8,6 +8,7 @@ import '../../../view_model/all_data_provider/all_data_provider.dart';
 import '../../../view_model/theme/common.dart';
 import '../../../view_model/theme/theme.dart';
 import '../../widgets/avatar/avatar.dart';
+import '../../widgets/icons/appicons.dart';
 
 class BList extends StatefulWidget {
   const BList({super.key});
@@ -20,10 +21,11 @@ class _BListState extends State<BList> {
   @override
   Widget build(BuildContext context) {
     final themeColor = context.watch<CtTheme>().currentTheme.colorScheme;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: themeColor.secondary,
       appBar: AppBar(
-        backgroundColor: themeColor.secondary,
+        backgroundColor: themeColor.onSecondary,
         title: const Text("Block List"),
       ),
       body: Padding(
@@ -45,12 +47,21 @@ class _BListState extends State<BList> {
                   return ListTile(
                     textColor: CommonColors.redC,
                     contentPadding: const EdgeInsets.all(0),
-                    leading: CA(
-                      radius: 30,
-                      image: Image.file(
-                        File(person.image!),
-                      ).image,
-                    ),
+                    leading: person.image != null
+                        ? Hero(
+                            tag: person.image! + person.id!.toString(),
+                            child: CA(
+                              image: Image.file(File(person.image!)).image,
+                              radius: width * 0.07,
+                            ),
+                          )
+                        : Hero(
+                            tag: "profile${person.firstname}",
+                            child: CA(
+                              radius: width * 0.07,
+                              child: AppIcons.person,
+                            ),
+                          ),
                     title: Text(person.firstname),
                     subtitle: Text(person.phone),
                   );

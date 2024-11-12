@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'services/database/bin/bin_db.dart';
 import 'services/database/contacts/add/add_contact.dart';
 import 'services/shared_pref/profile_store/profile_store.dart';
 import 'services/shared_pref/theme_manager/theme_pref_manager.dart';
 import 'view/screens/mains/home/home_page.dart';
 import 'view_model/all_data_provider/all_data_provider.dart';
+import 'view_model/bin_provider/bin_provider.dart';
 import 'view_model/call_log_provider/call_log_provider.dart';
 import 'view_model/contact_provider/contact_provider.dart';
 import 'view_model/filter_provider/filter_provider.dart';
@@ -18,7 +20,9 @@ Future<void> main() async {
   await ThemeManager.initThemePref();
   await ProfileStoreManager.initProfilePref();
   DBManager dbManager = DBManager();
+  BinDB binDB = BinDB();
   await dbManager.database;
+  await binDB.database;
   runApp(
     MultiProvider(
       providers: [
@@ -29,6 +33,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => SortProvider()),
         ChangeNotifierProvider(create: (_) => FilterProvider()),
         ChangeNotifierProvider(create: (_) => CallLogProvider()),
+        ChangeNotifierProvider(create: (_) => BinProvider())
       ],
       child: const MyApp(),
     ),
@@ -43,7 +48,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: Provider.of<CtTheme>(context).currentTheme,
       debugShowCheckedModeBanner: false,
-      title: "Contact App",
+      title: "Phone Book",
       home: const HomePage(),
     );
   }
